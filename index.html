@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Graphic Design 2025 | Александр Тулубаев</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
+    <!-- defer external scripts to avoid render-blocking -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet">
 
     <script>
@@ -32,7 +33,7 @@
     <style>
         body { background-color: #050505; color: white; overflow-x: hidden; }
         body.menu-open { overflow: hidden; } 
-        
+
         .bg-gradient-mesh {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background: radial-gradient(circle at 50% 50%, #111, #050505);
@@ -54,42 +55,64 @@
         .quiz-btn.correct { background-color: #10b981 !important; color: white; border-color: #10b981; }
         .quiz-btn.wrong { background-color: #ef4444 !important; color: white; border-color: #ef4444; }
 
-        /* --- Бургер-кнопка --- */
-        #burger-btn { z-index: 60; position: relative; } 
+        /* === BURGER === */
+        #burger-btn { z-index: 60; }
         .burger-line {
-            display: block; width: 24px; height: 2px;
-            background-color: white; margin: 5px auto;
-            transition: all 0.3s ease-in-out;
+          display: block;
+          width: 24px;
+          height: 2px;
+          background: white;
+          margin: 5px auto;
+          transition: transform .4s ease, opacity .3s ease;
         }
-        #burger-btn.active .burger-line:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-        #burger-btn.active .burger-line:nth-child(2) { opacity: 0; transform: translateX(10px); }
-        #burger-btn.active .burger-line:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+        #burger-btn.active .burger-line:nth-child(1) {
+          transform: translateY(7px) rotate(45deg);
+        }
+        #burger-btn.active .burger-line:nth-child(2) {
+          opacity: 0;
+        }
+        #burger-btn.active .burger-line:nth-child(3) {
+          transform: translateY(-7px) rotate(-45deg);
+        }
 
-        /* --- Мобильное меню --- */
+        /* === BACKDROP === */
         #menu-backdrop {
-            position: fixed; inset: 0; z-index: 49;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            opacity: 0; visibility: hidden;
-            transition: all 0.5s ease;
+          position: fixed;
+          inset: 0;
+          z-index: 49;
+          background: rgba(0,0,0,.35);
+          opacity: 0;
+          visibility: hidden;
         }
 
+        /* === MOBILE MENU === */
         #mobile-menu {
-            position: fixed; top: 0; right: 0; bottom: 0;
-            width: 80%; max-width: 400px;
-            background: #0a0a0a;
-            border-left: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 50;
-            display: flex; flex-direction: column; justify-content: center; align-items: flex-start; /* Выравнивание влево для контента */
-            transform: translateX(100%);
-            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+          position: fixed;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 80%;
+          max-width: 400px;
+          background: #0a0a0a;
+          transform: translateX(100%);
+          z-index: 50;
+        }
+
+        .menu-link {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+
+        /* уменьшение blur на мобильных устройствах для производительности */
+        @media (max-width: 640px) {
+          .blob { filter: blur(40px); opacity: 0.08; animation: none; }
+          #menu-backdrop { backdrop-filter: none; -webkit-backdrop-filter: none; }
         }
     </style>
 </head>
 <body class="antialiased font-sans">
 
-    <div id="intro-overlay">
+    <div id="intro-overlay" aria-hidden="false">
         <div class="text-center px-6">
             <h2 class="intro-item text-4xl md:text-6xl font-black tracking-tighter opacity-0 scale-90">
                 Проект <span class="text-accent italic">2025</span>
@@ -101,7 +124,7 @@
         </div>
     </div>
 
-    <div class="bg-gradient-mesh">
+    <div class="bg-gradient-mesh" aria-hidden="true">
         <div class="blob" style="top: -10%; left: -10%;"></div>
         <div class="blob" style="bottom: -10%; right: -10%; animation-delay: -7s; background: #8b5cf6;"></div>
     </div>
@@ -109,17 +132,17 @@
     <nav class="fixed w-full z-40 top-0 bg-dark/50 backdrop-blur-lg border-b border-white/5">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <div class="font-black text-xl md:text-2xl tracking-tighter uppercase">ProNext.<span class="text-accent">Design</span></div>
-            
+
             <div class="hidden md:flex gap-8 text-[10px] uppercase tracking-[0.3em] font-bold opacity-60">
                 <a href="#passport" class="hover:text-accent transition">Проект</a>
                 <a href="#analytics" class="hover:text-accent transition">Аналитика</a>
                 <a href="#theory" class="hover:text-accent transition">База</a>
                 <a href="#tools" class="hover:text-accent transition">Инструменты</a>
                 <a href="#quiz" class="hover:text-accent transition">Тест</a>
-                <a href="https://t.me/PhBlgolcat" target="_blank" class="hover:text-accent transition">Больше проектов</a>
+                <a href="https://t.me/PhBlgolcat" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition">Больше проектов</a>
             </div>
 
-            <button id="burger-btn" class="block md:hidden focus:outline-none">
+            <button id="burger-btn" class="block md:hidden focus:outline-none" aria-label="Открыть меню" aria-controls="mobile-menu" aria-expanded="false" type="button">
                 <span class="burger-line"></span>
                 <span class="burger-line"></span>
                 <span class="burger-line"></span>
@@ -127,16 +150,23 @@
         </div>
     </nav>
 
-    <div id="menu-backdrop" onclick="toggleMenu()"></div>
+    <div id="menu-backdrop" aria-hidden="true"></div>
 
-    <div id="mobile-menu">
+    <div id="mobile-menu" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1">
         <div class="absolute top-0 right-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
              <div class="absolute top-[-20%] right-[-50%] w-[300px] h-[300px] rounded-full bg-accent blur-[80px]"></div>
         </div>
 
         <div class="absolute top-8 left-8 z-20 menu-back opacity-0">
-            <button onclick="toggleMenu()" class="group flex items-center gap-3 text-white/50 hover:text-white transition-colors duration-300">
-                <svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            <button
+                id="menu-back"
+                class="group flex items-center gap-3 text-white/50 hover:text-white transition-colors duration-300"
+                type="button"
+            >
+                <svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
                 <span class="text-[10px] uppercase font-black tracking-[0.2em]">Назад</span>
             </button>
         </div>
@@ -148,9 +178,9 @@
             <a href="#theory" class="menu-link opacity-0 transform translate-x-10 hover:text-accent transition">База</a>
             <a href="#tools" class="menu-link opacity-0 transform translate-x-10 hover:text-accent transition">Инструменты</a>
             <a href="#quiz" class="menu-link opacity-0 transform translate-x-10 hover:text-accent transition">Тест</a>
-            <a href="https://t.me/PhBlgolcat" target="_blank" class="menu-link opacity-0 transform translate-x-10 hover:text-accent transition text-accent">Больше проектов</a>
+            <a href="https://t.me/PhBlgolcat" target="_blank" rel="noopener noreferrer" class="menu-link opacity-0 transform translate-x-10 hover:text-accent transition text-accent">Больше проектов</a>
         </nav>
-        
+
         <div class="absolute bottom-12 w-full px-12 opacity-0 menu-footer">
              <p class="text-[8px] uppercase text-gray-600 tracking-widest">Design Project 2025</p>
         </div>
@@ -164,7 +194,7 @@
                 <span class="font-serif italic font-light text-white/90 text-3xl md:text-7xl">в современном мире</span>
             </h1>
             <div class="max-w-xl mx-auto mb-12 opacity-60 hero-reveal text-sm md:text-base">
-                <p>Роль, тренды и практическое применение визуального языка в цифровую эпоху.</p>
+                <p>Роль, тренды и практическое применение визуального языка в цифровую эпохе.</p>
             </div>
             <div class="flex flex-col md:flex-row justify-center gap-6 md:gap-12 hero-reveal opacity-80">
                 <div class="text-center md:text-left">
@@ -183,7 +213,7 @@
         <div class="max-w-6xl mx-auto relative">
             <span class="text-7xl md:text-9xl font-black opacity-5 absolute -top-10 -left-4 md:-mt-20">01</span>
             <h2 class="text-3xl md:text-4xl font-bold mb-12 md:mb-16 tracking-tight reveal">Паспорт проекта</h2>
-            
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
                 <div class="space-y-8 reveal">
                     <div>
@@ -202,7 +232,7 @@
                         </ul>
                     </div>
                 </div>
-                
+
                 <div class="glass p-6 md:p-8 rounded-[2rem] reveal">
                     <h3 class="text-xs font-bold uppercase tracking-widest mb-8 opacity-50 text-center">График реализации</h3>
                     <div class="space-y-6">
@@ -255,7 +285,7 @@
             </div>
         </div>
     </section>
-    
+
     <section id="theory" class="py-16 md:py-32 px-6">
         <div class="max-w-6xl mx-auto">
             <h2 class="text-2xl md:text-3xl font-bold mb-12 md:mb-16 uppercase tracking-widest reveal">Основы дизайна</h2>
@@ -281,7 +311,7 @@
             <h2 class="text-3xl md:text-4xl font-black mb-12 md:mb-16 text-center reveal uppercase">Инструментарий</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 reveal">
                 <div class="p-6 md:p-8 border border-white/10 rounded-3xl">
-                    <h4 class="text-accent font-bold mb-6 uppercase tracking-widest text-xs">Графическое ПО</h4>
+                    <h4 class="text-accent font-bold mb-6 uppercase tracking-widest text-xs">Графическое <span class="italic">ПО</span></h4>
                     <ul class="space-y-4 text-sm opacity-60">
                         <li class="flex justify-between border-b border-white/5 pb-2"><span>Figma</span> <span>UX/UI Дизайн</span></li>
                         <li class="flex justify-between border-b border-white/5 pb-2"><span>Adobe Illustrator</span> <span>Векторная графика</span></li>
@@ -304,7 +334,7 @@
         <div class="max-w-2xl mx-auto glass p-8 md:p-12 rounded-[2.5rem] md:rounded-[3rem]">
             <h2 class="text-2xl md:text-3xl font-bold mb-2 text-center uppercase italic">Проверь себя</h2>
             <p class="text-center text-[10px] text-gray-500 mb-10 uppercase tracking-widest">5 вопросов по теории дизайна</p>
-            
+
             <div id="quiz-box">
                 <div id="q-content">
                     <h3 id="q-title" class="text-lg md:text-xl font-bold mb-8 text-center min-h-[60px]">Загрузка...</h3>
@@ -314,7 +344,7 @@
                 <div id="q-result" class="hidden text-center space-y-6">
                     <div id="res-score" class="text-6xl md:text-7xl font-black text-accent italic">0/5</div>
                     <p id="res-text" class="text-gray-400 font-medium text-sm"></p>
-                    <button type="button" onclick="restartQuiz()" class="px-8 py-3 bg-white text-black font-bold rounded-full uppercase text-[10px] tracking-widest hover:bg-accent transition">Пройти снова</button>
+                    <button id="quiz-restart" type="button" class="px-8 py-3 bg-white text-black font-bold rounded-full uppercase text-[10px] tracking-widest hover:bg-accent transition">Пройти снова</button>
                 </div>
             </div>
         </div>
@@ -324,12 +354,12 @@
         <div class="max-w-4xl mx-auto text-center">
             <h2 class="text-4xl md:text-8xl font-black uppercase mb-8 md:mb-12 italic leading-none reveal">Share Project</h2>
             <div class="inline-block p-4 bg-white rounded-[2rem] md:rounded-[2.5rem] mb-10 shadow-2xl reveal">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://sahoktulub-cloud.github.io/ProjectGraphicDesign/&color=050505" alt="QR Code" class="w-32 h-32 md:w-48 md:h-48">
+                <img loading="lazy" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://sahoktulub-cloud.github.io/ProjectGraphicDesign/&color=050505" alt="QR Code" class="w-32 h-32 md:w-48 md:h-48">
             </div>
             <p class="text-[10px] md:text-sm font-bold uppercase tracking-[0.3em] mb-12">Сканируй для перехода на проект</p>
-            
+
             <div class="flex justify-center gap-6">
-                <a href="https://drive.google.com/uc?export=download&id=1QXROIs0vowzRraYFztIbBvouvbnV9e3P" class="px-8 py-3 border-2 border-dark font-black text-[10px] uppercase hover:bg-dark hover:text-white transition inline-block text-center">
+                <a href="https://drive.google.com/uc?export=download&id=1QXROIs0vowzRraYFztIbBvouvbnV9e3P" class="px-8 py-3 border-2 border-dark font-black text-[10px] uppercase hover:bg-dark hover:text-white transition inline-block text-center" target="_blank" rel="noopener noreferrer">
                     Скачать буклет
                 </a>
             </div>
@@ -341,143 +371,387 @@
     </footer>
 
     <script>
-        gsap.registerPlugin(ScrollTrigger);
+    // Ensure GSAP is available (deferred scripts should have loaded by DOMContentLoaded)
+    (function () {
+        // small helper to query safely
+        const $ = (s) => document.querySelector(s);
+        const $$ = (s) => Array.from(document.querySelectorAll(s));
 
-        // --- ЛОГИКА МЕНЮ ---
-        const burgerBtn = document.getElementById('burger-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const menuBackdrop = document.getElementById('menu-backdrop');
-        const menuLinks = document.querySelectorAll('.menu-link');
-        const menuFooter = document.querySelector('.menu-footer');
-        const menuBack = document.querySelector('.menu-back'); // Находим кнопку "Назад"
-        
-        let isMenuOpen = false;
-
-        const menuTl = gsap.timeline({ paused: true, reversed: true });
-
-        menuTl
-            .to(menuBackdrop, { autoAlpha: 1, duration: 0.3 })
-            .to(mobileMenu, { x: "0%", duration: 0.5, ease: "power4.out" }, "-=0.2")
-            // Добавил анимацию появления кнопки "Назад"
-            .to(menuBack, { opacity: 1, x: 0, duration: 0.4 }, "-=0.1") 
-            .to(menuLinks, { opacity: 1, x: 0, duration: 0.4, stagger: 0.1, ease: "back.out(1.7)" }, "-=0.3")
-            .to(menuFooter, { opacity: 0.5, duration: 0.5 }, "-=0.2");
-
-        function toggleMenu() {
-            burgerBtn.classList.toggle('active');
-            document.body.classList.toggle('menu-open');
-            
-            if (!isMenuOpen) {
-                menuTl.play();
+        function onReady(fn) {
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                setTimeout(fn, 0);
             } else {
+                document.addEventListener('DOMContentLoaded', fn);
+            }
+        }
+
+        onReady(() => {
+            // register plugin if gsap exists
+            if (window.gsap && window.gsap.registerPlugin && window.ScrollTrigger) {
+                gsap.registerPlugin(ScrollTrigger);
+            }
+
+            const burgerBtn = $('#burger-btn');
+            const mobileMenu = $('#mobile-menu');
+            const menuBackdrop = $('#menu-backdrop');
+            const menuLinks = $$('.menu-link');
+            const menuFooter = $('.menu-footer');
+            const menuBack = $('.menu-back');
+            const menuBackBtn = $('#menu-back');
+            let isMenuOpen = false;
+
+            // Accessibility helpers
+            const FOCUSABLE_SELECTORS = 'a[href], button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])';
+            
+            // Helper function to get focusable elements
+            function getFocusable(el) {
+                if (!el) return [];
+                return Array.from(el.querySelectorAll(FOCUSABLE_SELECTORS)).filter(i => 
+                    i.offsetParent !== null && 
+                    !i.disabled && 
+                    !i.getAttribute('aria-hidden')
+                );
+            }
+
+            // Functions to update aria states
+            function setMenuAria(open) {
+                if (burgerBtn) burgerBtn.setAttribute('aria-expanded', String(open));
+                if (mobileMenu) mobileMenu.setAttribute('aria-hidden', String(!open));
+                if (menuBackdrop) menuBackdrop.setAttribute('aria-hidden', String(!open));
+            }
+
+            // Build menu timeline only if GSAP available
+            let menuTl = null;
+            if (window.gsap) {
+                menuTl = gsap.timeline({ 
+                    paused: true,
+                    onReverseComplete: function() {
+                        // Cleanup after menu closes
+                        burgerBtn.classList.remove('active');
+                        document.body.classList.remove('menu-open');
+                        setMenuAria(false);
+                        disableFocusTrap();
+                        if (burgerBtn) burgerBtn.focus();
+                    }
+                });
+
+                // Build animation sequence
+                if (menuBackdrop) {
+                    menuTl.fromTo(menuBackdrop,
+                        { autoAlpha: 0, visibility: 'hidden' },
+                        { autoAlpha: 1, visibility: 'visible', duration: 0.35, ease: "power2.out" }
+                    );
+                }
+
+                if (mobileMenu) {
+                    menuTl.fromTo(mobileMenu,
+                        { x: "100%" },
+                        { x: "0%", duration: 0.5, ease: "power4.out" },
+                        "-=0.2"
+                    );
+                }
+
+                if (menuBack) {
+                    menuTl.fromTo(menuBack,
+                        { opacity: 0, x: -10 },
+                        { opacity: 1, x: 0, duration: 0.36 },
+                        "-=0.35"
+                    );
+                }
+
+                if (menuLinks.length) {
+                    menuTl.fromTo(menuLinks,
+                        { opacity: 0, x: 40 },
+                        { opacity: 1, x: 0, duration: 0.45, stagger: 0.08, ease: "power2.out" },
+                        "-=0.3"
+                    );
+                }
+
+                if (menuFooter) {
+                    menuTl.fromTo(menuFooter,
+                        { opacity: 0 },
+                        { opacity: 0.6, duration: 0.35 },
+                        "-=0.25"
+                    );
+                }
+            }
+
+            // Focus trap variables
+            let trappedElements = [];
+            let currentFocusIndex = 0;
+            let trapKeyHandler = null;
+
+            function enableFocusTrap(container) {
+                trappedElements = getFocusable(container);
+                if (trappedElements.length) {
+                    currentFocusIndex = 0;
+                    trappedElements[0].focus();
+                }
+                trapKeyHandler = function(e) {
+                    if (e.key === 'Tab') {
+                        e.preventDefault();
+                        if (trappedElements.length === 0) return;
+                        if (e.shiftKey) {
+                            currentFocusIndex = (currentFocusIndex - 1 + trappedElements.length) % trappedElements.length;
+                        } else {
+                            currentFocusIndex = (currentFocusIndex + 1) % trappedElements.length;
+                        }
+                        trappedElements[currentFocusIndex].focus();
+                    }
+                };
+                document.addEventListener('keydown', trapKeyHandler);
+            }
+
+            function disableFocusTrap() {
+                if (trapKeyHandler) {
+                    document.removeEventListener('keydown', trapKeyHandler);
+                    trapKeyHandler = null;
+                }
+                trappedElements = [];
+            }
+
+            function openMenu() {
+                if (!menuTl) {
+                    // Fallback if GSAP is not available
+                    if (menuBackdrop) {
+                        menuBackdrop.style.opacity = '1';
+                        menuBackdrop.style.visibility = 'visible';
+                    }
+                    if (mobileMenu) {
+                        mobileMenu.style.transform = 'translateX(0)';
+                    }
+                    burgerBtn.classList.add('active');
+                    document.body.classList.add('menu-open');
+                    setMenuAria(true);
+                    if (mobileMenu) enableFocusTrap(mobileMenu);
+                    isMenuOpen = true;
+                    return;
+                }
+                
+                // Reset timeScale for normal speed
+                menuTl.timeScale(1);
+                menuTl.play(0);
+                burgerBtn.classList.add('active');
+                document.body.classList.add('menu-open');
+                setMenuAria(true);
+                enableFocusTrap(mobileMenu);
+                isMenuOpen = true;
+            }
+
+            function closeMenu() {
+                if (!menuTl) {
+                    // Fallback if GSAP is not available
+                    if (menuBackdrop) {
+                        menuBackdrop.style.opacity = '0';
+                        menuBackdrop.style.visibility = 'hidden';
+                    }
+                    if (mobileMenu) {
+                        mobileMenu.style.transform = 'translateX(100%)';
+                    }
+                    burgerBtn.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                    setMenuAria(false);
+                    disableFocusTrap();
+                    if (burgerBtn) burgerBtn.focus();
+                    isMenuOpen = false;
+                    return;
+                }
+                
+                // Faster speed for closing
+                menuTl.timeScale(1.6);
                 menuTl.reverse();
-            }
-            isMenuOpen = !isMenuOpen;
-        }
-
-        burgerBtn.addEventListener('click', toggleMenu);
-
-        menuLinks.forEach(link => {
-            link.addEventListener('click', toggleMenu);
-        });
-
-        // --- Интро ---
-        window.addEventListener('load', () => {
-            const tl = gsap.timeline();
-            tl.to(".intro-item", { opacity: 1, scale: 1, duration: 1, stagger: 0.2, ease: "power4.out" })
-              .to("#intro-bar", { width: "100px", duration: 0.8, ease: "power2.inOut" }, "-=0.3")
-              .to("#intro-overlay", { 
-                yPercent: -100, 
-                duration: 1, 
-                ease: "expo.inOut", 
-                delay: 0.3,
-                onComplete: () => {
-                    document.getElementById('intro-overlay').style.display = 'none';
-                }
-              })
-              .from(".hero-reveal", { y: 60, opacity: 0, stagger: 0.15, duration: 1.2, ease: "power4.out" }, "-=0.5");
-        });
-
-        gsap.utils.toArray('.reveal').forEach(el => {
-            gsap.from(el, {
-                scrollTrigger: {
-                    trigger: el,
-                    start: "top 90%",
-                },
-                y: 40,
-                opacity: 0,
-                duration: 1,
-                ease: "power2.out"
-            });
-        });
-
-        // --- Квиз ---
-        const quizData = [
-            { q: "Какое количество шрифтов рекомендуется использовать в макете?", a: ["1-2", "5-6", "Любое количество"], c: 0 },
-            { q: "Что такое CMYK?", a: ["Профиль для мониторов", "Цветовая модель для печати", "Формат сжатия"], c: 1 },
-            { q: "Какой цвет символизирует спокойствие и доверие?", a: ["Красный", "Синий", "Оранжевый"], c: 1 },
-            { q: "Основная задача UX дизайна — это...", a: ["Красота", "Удобство пользователя", "Размер файла"], c: 1 },
-            { q: "Что такое 'правило третей'?", a: ["Метод верстки кода", "Композиционный прием", "Тип лицензии"], c: 1 }
-        ];
-
-        let currentQ = 0;
-        let score = 0;
-        let canClick = true;
-
-        function loadQuiz() {
-            canClick = true;
-            const q = quizData[currentQ];
-            document.getElementById('q-title').innerText = q.q;
-            const container = document.getElementById('q-options');
-            container.innerHTML = '';
-            
-            q.a.forEach((ans, i) => {
-                const btn = document.createElement('button');
-                btn.type = "button";
-                btn.className = "quiz-btn p-4 rounded-xl border border-white/10 hover:bg-white/5 transition font-bold text-[10px] uppercase tracking-widest text-left";
-                btn.innerText = ans;
-                btn.onclick = () => selectAns(i, btn);
-                container.appendChild(btn);
-            });
-        }
-
-        function selectAns(idx, btn) {
-            if (!canClick) return;
-            canClick = false;
-
-            const isCorrect = idx === quizData[currentQ].c;
-            if(isCorrect) {
-                score++;
-                btn.classList.add('correct');
-            } else {
-                btn.classList.add('wrong');
+                isMenuOpen = false;
             }
 
-            setTimeout(() => {
-                currentQ++;
-                if(currentQ < quizData.length) {
-                    loadQuiz();
+            function toggleMenu() {
+                if (!isMenuOpen) {
+                    openMenu();
                 } else {
-                    showResults();
+                    closeMenu();
                 }
-            }, 800);
-        }
+            }
 
-        function showResults() {
-            document.getElementById('q-content').classList.add('hidden');
-            document.getElementById('q-result').classList.remove('hidden');
-            document.getElementById('res-score').innerText = `${score}/5`;
-            document.getElementById('res-text').innerText = score >= 4 ? "Отличный результат! Вы мастер основ." : "Хорошо, но стоит еще раз изучить теорию.";
-        }
+            // Burger button click handler
+            if (burgerBtn) {
+                burgerBtn.addEventListener('click', toggleMenu);
+            }
 
-        function restartQuiz() {
-            currentQ = 0; score = 0;
-            document.getElementById('q-content').classList.remove('hidden');
-            document.getElementById('q-result').classList.add('hidden');
+            // Backdrop click handler
+            if (menuBackdrop) {
+                menuBackdrop.addEventListener('click', closeMenu);
+            }
+
+            // Back button in menu
+            if (menuBackBtn) {
+                menuBackBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    closeMenu();
+                });
+            }
+
+            // Smooth navigation for menu links
+            menuLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const href = link.getAttribute('href');
+                    
+                    // Handle internal links
+                    if (href && href.startsWith('#')) {
+                        e.preventDefault();
+                        closeMenu();
+                        
+                        // Small delay to allow menu to close before scrolling
+                        setTimeout(() => {
+                            const target = $(href);
+                            if (target) {
+                                target.scrollIntoView({ 
+                                    behavior: 'smooth', 
+                                    block: 'start' 
+                                });
+                            }
+                        }, 300);
+                    } 
+                    // External links - just close menu
+                    else if (href && href.startsWith('http')) {
+                        closeMenu();
+                        // Navigation will continue naturally
+                    }
+                });
+            });
+
+            // Escape key to close menu if open (global)
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && isMenuOpen) {
+                    closeMenu();
+                }
+            });
+
+            // Intro animations (using GSAP if present)
+            window.addEventListener('load', () => {
+                if (window.gsap) {
+                    const tl = gsap.timeline();
+                    tl.to(".intro-item", { opacity: 1, scale: 1, duration: 1, stagger: 0.18, ease: "power4.out" })
+                      .to("#intro-bar", { width: "100px", duration: 0.75, ease: "power2.inOut" }, "-=0.25")
+                      .to("#intro-overlay", { 
+                        yPercent: -100, 
+                        duration: 0.95, 
+                        ease: "expo.inOut", 
+                        delay: 0.25,
+                        onComplete: () => {
+                            const ov = document.getElementById('intro-overlay');
+                            if (ov) ov.style.display = 'none';
+                        }
+                      })
+                      .from(".hero-reveal", { y: 60, opacity: 0, stagger: 0.14, duration: 1.05, ease: "power4.out" }, "-=0.45");
+                } else {
+                    // fallback: hide overlay immediately
+                    const ov = document.getElementById('intro-overlay');
+                    if (ov) ov.style.display = 'none';
+                }
+            });
+
+            // Scroll-trigger reveal fallback
+            if (window.gsap && window.ScrollTrigger) {
+                gsap.utils.toArray('.reveal').forEach(el => {
+                    gsap.from(el, {
+                        scrollTrigger: {
+                            trigger: el,
+                            start: "top 90%",
+                        },
+                        y: 40,
+                        opacity: 0,
+                        duration: 0.9,
+                        ease: "power2.out"
+                    });
+                });
+            } else {
+                // simple CSS fallback: reveal immediately
+                document.querySelectorAll('.reveal').forEach(el => { 
+                    el.style.opacity = 1; 
+                    el.style.transform = 'none'; 
+                });
+            }
+
+            // --- Квиз ---
+            const quizData = [
+                { q: "Какое количество шрифтов рекомендуется использовать в макете?", a: ["1-2", "5-6", "Любое количество"], c: 0 },
+                { q: "Что такое CMYK?", a: ["Профиль для мониторов", "Цветовая модель для печати", "Формат сжатия"], c: 1 },
+                { q: "Какой цвет символизирует спокойствие и доверие?", a: ["Красный", "Синий", "Оранжевый"], c: 1 },
+                { q: "Основная задача UX дизайна — это...", a: ["Красота", "Удобство пользователя", "Размер файла"], c: 1 },
+                { q: "Что такое 'правило третей'?", a: ["Метод верстки кода", "Композиционный прием", "Тип лицензии"], c: 1 }
+            ];
+
+            let currentQ = 0;
+            let score = 0;
+            let canClick = true;
+
+            function loadQuiz() {
+                canClick = true;
+                const q = quizData[currentQ];
+                const title = $('#q-title');
+                const container = $('#q-options');
+                if (!title || !container) return;
+                title.innerText = q.q;
+                container.innerHTML = '';
+
+                q.a.forEach((ans, i) => {
+                    const btn = document.createElement('button');
+                    btn.type = "button";
+                    btn.className = "quiz-btn p-4 rounded-xl border border-white/10 hover:bg-white/5 transition font-bold text-[10px] uppercase tracking-widest text-left";
+                    btn.innerText = ans;
+                    btn.addEventListener('click', () => selectAns(i, btn));
+                    container.appendChild(btn);
+                });
+            }
+
+            function selectAns(idx, btn) {
+                if (!canClick) return;
+                canClick = false;
+
+                const isCorrect = idx === quizData[currentQ].c;
+                if(isCorrect) {
+                    score++;
+                    btn.classList.add('correct');
+                } else {
+                    btn.classList.add('wrong');
+                }
+
+                setTimeout(() => {
+                    currentQ++;
+                    if(currentQ < quizData.length) {
+                        loadQuiz();
+                    } else {
+                        showResults();
+                    }
+                }, 800);
+            }
+
+            function showResults() {
+                const content = $('#q-content');
+                const result = $('#q-result');
+                if (!content || !result) return;
+                content.classList.add('hidden');
+                result.classList.remove('hidden');
+                $('#res-score').innerText = `${score}/5`;
+                $('#res-text').innerText = score >= 4 ? "Отличный результат! Вы мастер основ." : "Хорошо, но стоит еще раз изучить теорию.";
+            }
+
+            function restartQuiz() {
+                currentQ = 0; score = 0;
+                const content = $('#q-content');
+                const result = $('#q-result');
+                if (!content || !result) return;
+                content.classList.remove('hidden');
+                result.classList.add('hidden');
+                loadQuiz();
+            }
+
+            // attach restart handler
+            const restartBtn = $('#quiz-restart');
+            if (restartBtn) restartBtn.addEventListener('click', restartQuiz);
+
             loadQuiz();
-        }
-
-        loadQuiz();
+        });
+    })();
     </script>
 </body>
 </html>
